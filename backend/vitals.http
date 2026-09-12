@@ -1,0 +1,143 @@
+### Add Vitals
+POST http://localhost:8080/api/vitals
+Content-Type: application/json
+
+{
+  "patientId": "patient-001",
+  "heartRate": 78,
+  "systolicBP": 120,
+  "diastolicBP": 80,
+  "temperature": 36.8,
+  "oxygenSaturation": 98,
+  "recordedAt": "2026-09-10T16:45:00"
+}
+
+### Get Patient Vitals
+GET http://localhost:8080/api/vitals/patient/patient-001
+
+### Create Vitals
+POST http://localhost:8080/api/vitals
+Authorization: Basic YWRtaW46YWRtaW4xMjM=
+Content-Type: application/json
+
+{
+  "patientId": "patient-001",
+  "heartRate": 78,
+  "systolicBP": 120,
+  "diastolicBP": 80,
+  "temperature": 36.8,
+  "oxygenSaturation": 98,
+  "recordedAt": "2026-09-10T20:15:00"
+}
+
+### Get Patient with Consent Check
+GET http://localhost:8080/api/patients/patient-001
+Authorization: Basic YWRtaW46YWRtaW4xMjM=
+
+
+### Valid FHIR Resource
+POST http://localhost:8080/api/fhir
+Authorization: Basic YWRtaW46YWRtaW4xMjM=
+Content-Type: application/json
+
+{
+  "resourceType": "Patient",
+  "id": "patient-002",
+  "name": [
+    {
+      "use": "official",
+      "family": "Smith",
+      "given": ["Robert"]
+    }
+  ],
+  "gender": "male",
+  "birthDate": "1988-07-20"
+}
+
+### Invalid FHIR Resource - Missing resourceType
+POST http://localhost:8080/api/fhir
+Authorization: Basic YWRtaW46YWRtaW4xMjM=
+Content-Type: application/json
+
+{
+  "id": "patient-003",
+  "name": [
+    {
+      "family": "Test",
+      "given": ["Patient"]
+    }
+  ],
+  "gender": "male"
+}
+
+### Valid Vitals
+POST http://localhost:8080/api/vitals
+Authorization: Basic YWRtaW46YWRtaW4xMjM=
+Content-Type: application/json
+
+{
+  "patientId": "patient-001",
+  "heartRate": 78,
+  "systolicBP": 120,
+  "diastolicBP": 80,
+  "temperature": 36.8,
+  "oxygenSaturation": 98,
+  "recordedAt": "2026-09-10T22:15:00"
+}
+
+### Invalid Vitals
+POST http://localhost:8080/api/vitals
+Authorization: Basic YWRtaW46YWRtaW4xMjM=
+Content-Type: application/json
+
+{
+  "patientId": "patient-001",
+  "heartRate": -50,
+  "systolicBP": 120,
+  "diastolicBP": 80,
+  "temperature": 36.8,
+  "oxygenSaturation": 98,
+  "recordedAt": "2026-09-10T22:20:00"
+}
+
+### Get Patient - Audit Test
+GET http://localhost:8080/api/patients/patient-001
+Authorization: Basic YWRtaW46YWRtaW4xMjM=
+
+
+### Doctor - Get Patient
+GET http://localhost:8080/api/patients/patient-001
+Authorization: Basic ZG9jdG9yOmRvY3RvcjEyMw==
+
+
+### Doctor - Try Doctor Management
+GET http://localhost:8080/api/doctors
+Authorization: Basic ZG9jdG9yOmRvY3RvcjEyMw==
+
+
+### Complete Health Twin
+POST http://localhost:8080/api/health-twins
+Authorization: Basic YWRtaW46YWRtaW4xMjM=
+Content-Type: application/json
+
+{
+  "patientId": "patient-001",
+  "patientName": "John Doe",
+  "age": 35,
+  "gender": "Male",
+  "conditions": ["Hypertension"],
+  "medications": ["Amlodipine"]
+}
+
+### Incomplete Health Twin
+POST http://localhost:8080/api/health-twins
+Authorization: Basic YWRtaW46YWRtaW4xMjM=
+Content-Type: application/json
+
+{
+  "patientId": "patient-003",
+  "patientName": "Test Patient",
+  "age": 40,
+  "conditions": ["Diabetes"],
+  "medications": ["Metformin"]
+}

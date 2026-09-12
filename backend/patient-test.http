@@ -1,0 +1,12 @@
+### Create Patient
+POST http://localhost:8080/api/patients
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "age": 35,
+  "gender": "Male"
+}
+
+### Get All Patients
+GET http://localhost:8080/api/patients

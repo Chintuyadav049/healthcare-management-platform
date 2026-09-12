@@ -1,0 +1,20 @@
+### Grant consent
+POST http://localhost:8080/api/consents
+Authorization: Basic YWRtaW46YWRtaW4xMjM=
+Content-Type: application/json
+
+{
+  "patientId": "patient-001",
+  "granted": true,
+  "purpose": "Health data processing",
+  "grantedAt": "2026-09-10T19:20:00"
+}
+
+### Get consent for patient
+GET http://localhost:8080/api/patients/6aa25ef6ee5e90f064b341c2
+Authorization: Basic YWRtaW46YWRtaW4xMjM=
+
+
+### Get consent for patient
+GET http://localhost:8080/api/patients
+Authorization: Basic YWRtaW46YWRtaW4xMjM=

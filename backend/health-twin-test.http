@@ -1,0 +1,22 @@
+### Create Health Twin
+POST http://localhost:8080/api/health-twins
+Content-Type: application/json
+
+{
+  "patientId": "patient-001",
+  "patientName": "John Doe",
+  "age": 36,
+  "gender": "male",
+  "conditions": [
+    "Hypertension"
+  ],
+  "medications": [
+    "Amlodipine"
+  ]
+}
+
+### Get All Health Twins
+GET http://localhost:8080/api/health-twins
+
+### Get Health Twin for Patient
+GET http://localhost:8080/api/health-twins/patient-001

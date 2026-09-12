@@ -1,0 +1,12 @@
+### Create Doctor
+POST http://localhost:8080/api/doctors
+Content-Type: application/json
+
+{
+  "name": "Dr. Sarah Smith",
+  "specialization": "Cardiology",
+  "email": "sarah.smith@example.com"
+}
+
+### Get All Doctors
+GET http://localhost:8080/api/doctors
