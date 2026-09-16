@@ -23,6 +23,7 @@ function StatusBadge({ status }) {
 }
 
 function Consent() {
+  const role = localStorage.getItem("role") || "PATIENT";
   const [consents, setConsents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -40,11 +41,20 @@ function Consent() {
 
       const response = await API.get("/consents");
 
-      const data = Array.isArray(response.data)
+      const rawData = Array.isArray(response.data)
         ? response.data
         : response.data?.content || [];
 
-      setConsents(data);
+      const data =
+        role === "PATIENT"
+          ? rawData.filter(
+              (c) =>
+                c.patientId === "patient-001" ||
+                (c.patientName && c.patientName.toLowerCase().includes("john"))
+            )
+          : rawData;
+
+      setConsents(data.length > 0 ? data : (role === "PATIENT" ? rawData.slice(0, 1) : []));
     } catch (err) {
       console.error("Failed to load consents:", err);
 
@@ -150,221 +160,70 @@ function Consent() {
       <div className="mx-auto max-w-7xl space-y-6">
 
         {/* Hero */}
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700 p-7 text-white shadow-xl sm:p-9">
+        <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 p-6 text-white shadow-md sm:p-8">
+          <div className="relative z-10 max-w-2xl">
+            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              {role === "PATIENT" ? "My Consent & Privacy Permissions" : "Patient Consent & Data Governance"}
+            </h2>
+            <p className="mt-2 text-xs leading-relaxed text-blue-100 sm:text-sm">
+              {role === "PATIENT"
+                ? "View your active data authorization scopes and consent status for digital health twins."
+                : "Manage clinical data access permissions, consent audit logs, and HIPAA privacy authorizations."}
+            </p>
+          </div>
+
           <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
           <div className="absolute -bottom-20 left-1/3 h-56 w-56 rounded-full bg-cyan-300/10 blur-3xl" />
-
-          <div className="relative max-w-3xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold backdrop-blur">
-              <span className="h-2 w-2 rounded-full bg-emerald-300" />
-              Privacy & Access Control
-            </div>
-
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Patient data should stay under control.
-            </h1>
-
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-blue-50 sm:text-base">
-              Monitor consent status and understand which patient records
-              can be accessed across the MediSphere healthcare platform.
-            </p>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur">
-                <p className="text-xs text-blue-100">Privacy principle</p>
-                <p className="mt-1 text-sm font-semibold">
-                  Consent-based access
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur">
-                <p className="text-xs text-blue-100">Security layer</p>
-                <p className="mt-1 text-sm font-semibold">
-                  Controlled patient data
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur">
-                <p className="text-xs text-blue-100">Platform focus</p>
-                <p className="mt-1 text-sm font-semibold">
-                  Privacy-aware healthcare
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Privacy notice */}
-        <section className="rounded-2xl border border-blue-100 bg-blue-50 p-5">
-          <div className="flex gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-xl shadow-sm">
-              🔐
-            </div>
-
-            <div>
-              <h2 className="font-semibold text-slate-900">
-                Why consent matters
-              </h2>
-
-              <p className="mt-1 text-sm leading-6 text-slate-600">
-                Consent provides a clear basis for accessing patient
-                information. MediSphere can use consent information together
-                with authentication and authorization controls to protect
-                sensitive healthcare data.
-              </p>
-            </div>
-          </div>
         </section>
 
         {/* Stats */}
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-sm font-medium text-slate-500">
+            <p className="text-xs font-semibold text-slate-500">
               Total Consents
             </p>
-            <p className="mt-2 text-3xl font-bold text-slate-900">
+            <p className="mt-2 text-3xl font-extrabold text-slate-800">
               {normalizedConsents.length}
             </p>
-            <p className="mt-1 text-xs text-slate-500">
-              Consent records
+            <p className="mt-1 text-xs text-slate-400">
+              Active authorizations
             </p>
           </div>
 
-          <div className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-5 shadow-sm">
-            <p className="text-sm font-medium text-emerald-700">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-xs font-semibold text-slate-500">
               Active Access
             </p>
-            <p className="mt-2 text-3xl font-bold text-emerald-800">
+            <p className="mt-2 text-3xl font-extrabold text-emerald-600">
               {activeCount}
             </p>
-            <p className="mt-1 text-xs text-emerald-700">
-              Currently active
+            <p className="mt-1 text-xs text-slate-400">
+              Permitted data sharing
             </p>
           </div>
 
-          <div className="rounded-2xl border border-amber-100 bg-amber-50/60 p-5 shadow-sm">
-            <p className="text-sm font-medium text-amber-700">
-              Pending
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-xs font-semibold text-slate-500">
+              Pending Review
             </p>
-            <p className="mt-2 text-3xl font-bold text-amber-800">
+            <p className="mt-2 text-3xl font-extrabold text-amber-600">
               {pendingCount}
             </p>
-            <p className="mt-1 text-xs text-amber-700">
-              Awaiting confirmation
+            <p className="mt-1 text-xs text-slate-400">
+              Awaiting verification
             </p>
           </div>
 
-          <div className="rounded-2xl border border-rose-100 bg-rose-50/60 p-5 shadow-sm">
-            <p className="text-sm font-medium text-rose-700">
-              Revoked
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-xs font-semibold text-slate-500">
+              Revoked / Denied
             </p>
-            <p className="mt-2 text-3xl font-bold text-rose-800">
+            <p className="mt-2 text-3xl font-extrabold text-slate-400">
               {revokedCount}
             </p>
-            <p className="mt-1 text-xs text-rose-700">
-              Access withdrawn
+            <p className="mt-1 text-xs text-slate-400">
+              Withdrawn access
             </p>
-          </div>
-        </section>
-
-        {/* Access control */}
-        <section className="grid gap-5 lg:grid-cols-3">
-
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
-                  Access governance
-                </p>
-
-                <h2 className="mt-1 text-xl font-bold text-slate-900">
-                  Privacy control workflow
-                </h2>
-
-                <p className="mt-2 text-sm leading-6 text-slate-500">
-                  Consent records provide visibility into whether patient
-                  information is available for authorized healthcare use.
-                </p>
-              </div>
-
-              <div className="hidden h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-xl sm:flex">
-                🛡️
-              </div>
-            </div>
-
-            <div className="mt-6 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-xl bg-slate-50 p-4">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white shadow-sm">
-                  01
-                </div>
-                <h3 className="mt-3 text-sm font-semibold text-slate-900">
-                  Identify patient
-                </h3>
-                <p className="mt-1 text-xs leading-5 text-slate-500">
-                  Associate access with the correct patient record.
-                </p>
-              </div>
-
-              <div className="rounded-xl bg-slate-50 p-4">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white shadow-sm">
-                  02
-                </div>
-                <h3 className="mt-3 text-sm font-semibold text-slate-900">
-                  Check consent
-                </h3>
-                <p className="mt-1 text-xs leading-5 text-slate-500">
-                  Verify whether the required permission is available.
-                </p>
-              </div>
-
-              <div className="rounded-xl bg-slate-50 p-4">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white shadow-sm">
-                  03
-                </div>
-                <h3 className="mt-3 text-sm font-semibold text-slate-900">
-                  Control access
-                </h3>
-                <p className="mt-1 text-xs leading-5 text-slate-500">
-                  Allow authorized access while protecting patient privacy.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-wider text-cyan-600">
-              Coverage
-            </p>
-
-            <h2 className="mt-1 text-xl font-bold text-slate-900">
-              Patient visibility
-            </h2>
-
-            <div className="mt-6 flex items-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-50 text-2xl">
-                👥
-              </div>
-
-              <div>
-                <p className="text-3xl font-bold text-slate-900">
-                  {uniquePatients}
-                </p>
-                <p className="text-sm text-slate-500">
-                  Patients represented
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-6 border-t border-slate-100 pt-5">
-              <p className="text-sm font-medium text-slate-700">
-                Privacy-first architecture
-              </p>
-
-              <p className="mt-2 text-xs leading-5 text-slate-500">
-                Authentication, authorization and consent checks work together
-                to reduce unauthorized access to healthcare information.
-              </p>
-            </div>
           </div>
         </section>
 
@@ -394,31 +253,33 @@ function Consent() {
               </button>
             </div>
 
-            <div className="mt-5 flex flex-col gap-3 md:flex-row">
-              <div className="relative flex-1">
-                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                  🔎
-                </span>
+            {role !== "PATIENT" && (
+              <div className="mt-5 flex flex-col gap-3 md:flex-row">
+                <div className="relative flex-1">
+                  <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                    🔎
+                  </span>
 
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search patient, consent ID, or purpose..."
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-11 pr-4 text-sm outline-none transition focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-100"
-                />
+                  <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search patient, consent ID, or purpose..."
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-11 pr-4 text-sm outline-none transition focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                  />
+                </div>
+
+                <select
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                  className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+                >
+                  <option value="ALL">All statuses</option>
+                  <option value="ACTIVE">Active</option>
+                  <option value="PENDING">Pending</option>
+                  <option value="REVOKED">Revoked</option>
+                </select>
               </div>
-
-              <select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
-              >
-                <option value="ALL">All statuses</option>
-                <option value="ACTIVE">Active</option>
-                <option value="PENDING">Pending</option>
-                <option value="REVOKED">Revoked</option>
-              </select>
-            </div>
+            )}
           </div>
 
           {loading && (

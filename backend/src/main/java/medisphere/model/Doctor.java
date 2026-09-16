@@ -13,6 +13,11 @@ public class Doctor {
     private String specialization;
     private String email;
 
+    private String department;
+    private String phone;
+    private String licenseNumber;
+    private String status = "ACTIVE";
+
     public Doctor() {
     }
 
@@ -20,6 +25,17 @@ public class Doctor {
         this.name = name;
         this.specialization = specialization;
         this.email = email;
+        this.status = "ACTIVE";
+    }
+
+    public Doctor(String name, String specialization, String email, String department, String phone, String licenseNumber) {
+        this.name = name;
+        this.specialization = specialization;
+        this.email = email;
+        this.department = department;
+        this.phone = phone;
+        this.licenseNumber = licenseNumber;
+        this.status = "ACTIVE";
     }
 
     public String getId() {
@@ -52,5 +68,37 @@ public class Doctor {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getLicenseNumber() {
+        return licenseNumber;
+    }
+
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

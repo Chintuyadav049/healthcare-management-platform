@@ -5,6 +5,7 @@ import API from "../services/api";
 
 function CarePlans() {
   const navigate = useNavigate();
+  const role = localStorage.getItem("role") || "PATIENT";
 
   const [patients, setPatients] = useState([]);
   const [twins, setTwins] = useState([]);
@@ -25,17 +26,19 @@ function CarePlans() {
           API.get("/health-twins"),
         ]);
 
-      setPatients(
-        Array.isArray(patientsResponse.data)
-          ? patientsResponse.data
-          : []
-      );
+      const allPatients = Array.isArray(patientsResponse.data) ? patientsResponse.data : [];
+      const allTwins = Array.isArray(twinsResponse.data) ? twinsResponse.data : [];
 
-      setTwins(
-        Array.isArray(twinsResponse.data)
-          ? twinsResponse.data
-          : []
-      );
+      if (role === "PATIENT") {
+        const myTwins = allTwins.filter(
+          (t) => t.patientId === "patient-001" || (t.patientName && t.patientName.toLowerCase().includes("john"))
+        );
+        setTwins(myTwins.length > 0 ? myTwins : allTwins.slice(0, 1));
+        setPatients(allPatients.filter((p) => p.patientId === "patient-001" || p.id === "patient-001"));
+      } else {
+        setPatients(allPatients);
+        setTwins(allTwins);
+      }
     } catch (err) {
       console.error("Failed to load care plan data:", err);
 
@@ -144,54 +147,33 @@ function CarePlans() {
 
   return (
     <AppLayout
-      title="Care Plans"
-      subtitle="Coordinate patient care using clinical information and Cognitive Twin insights"
+      title={role === "PATIENT" ? "My Care Plan" : "Care Plans"}
+      subtitle={
+        role === "PATIENT"
+          ? "Personalized clinical plan, active conditions and medications"
+          : "Coordinate patient care using clinical information and Cognitive Twin insights"
+      }
     >
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 px-7 py-9 shadow-xl shadow-blue-500/10 sm:px-10">
-        <div className="relative z-10 max-w-3xl">
-          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-blue-100">
-            Clinical Coordination
-          </p>
-
-          <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Patient Care Plans
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 p-6 text-white shadow-md sm:p-8">
+        <div className="relative z-10 max-w-2xl">
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            {role === "PATIENT" ? "My Health Care Plan" : "Patient Care Plans"}
           </h2>
 
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-blue-50">
-            Organize patient conditions, medications, and clinical
-            information into a clear care-management view.
+          <p className="mt-2 text-xs leading-relaxed text-blue-100 sm:text-sm">
+            {role === "PATIENT"
+              ? "Your active medical conditions, prescribed medications, and physician care directions."
+              : "Organize patient conditions, medications, and clinical information into a clear care-management view."}
           </p>
         </div>
 
         <div className="absolute -right-20 -top-24 h-64 w-64 rounded-full bg-white/10" />
-
         <div className="absolute -bottom-32 right-28 h-72 w-72 rounded-full bg-white/10" />
 
-        <div className="absolute right-14 top-1/2 hidden -translate-y-1/2 lg:flex">
-          <div className="flex h-36 w-36 items-center justify-center rounded-full border border-white/20 bg-white/10 text-5xl text-white backdrop-blur-sm">
-            +
-          </div>
-        </div>
-      </section>
-
-      {/* Information notice */}
-      <section className="mt-5 rounded-2xl border border-blue-100 bg-blue-50 px-5 py-4">
-        <div className="flex gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
-            i
-          </div>
-
-          <div>
-            <p className="text-xs font-bold text-blue-800">
-              Care coordination view
-            </p>
-
-            <p className="mt-1 text-xs leading-5 text-blue-700">
-              This page currently uses patient and Cognitive Twin
-              information available from the MediSphere backend.
-              A dedicated care-plan API can be connected later.
-            </p>
+        <div className="absolute right-12 top-1/2 hidden -translate-y-1/2 lg:flex">
+          <div className="flex h-28 w-28 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-4xl text-white backdrop-blur-sm">
+            ✓
           </div>
         </div>
       </section>
@@ -199,78 +181,80 @@ function CarePlans() {
       {/* Stats */}
       <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          label="Total Care Plans"
+          label={role === "PATIENT" ? "Care Directives" : "Total Care Plans"}
           value={loading ? "—" : carePlans.length}
           icon="+"
           iconClass="bg-blue-50 text-blue-600"
         />
 
         <StatCard
-          label="Active Plans"
+          label="Active Status"
           value={loading ? "—" : activeCount}
           icon="✓"
           iconClass="bg-emerald-50 text-emerald-600"
         />
 
         <StatCard
-          label="Needs Review"
-          value={loading ? "—" : reviewCount}
-          icon="!"
-          iconClass="bg-amber-50 text-amber-600"
+          label="Prescribed Meds"
+          value={loading ? "—" : carePlans[0]?.medications?.length || 0}
+          icon="💊"
+          iconClass="bg-indigo-50 text-indigo-600"
         />
 
         <StatCard
-          label="Patients Connected"
-          value={loading ? "—" : patients.length}
+          label="Monitored Conditions"
+          value={loading ? "—" : carePlans[0]?.conditions?.length || 0}
           icon="♙"
           iconClass="bg-cyan-50 text-cyan-600"
         />
       </section>
 
-      {/* Filters */}
-      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-600">
-              Care Management
-            </p>
+      {/* Filters (Hidden for Patient) */}
+      {role !== "PATIENT" && (
+        <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-600">
+                Care Management
+              </p>
 
-            <h3 className="mt-1 text-lg font-extrabold text-slate-800">
-              Patient care plans
-            </h3>
+              <h3 className="mt-1 text-lg font-extrabold text-slate-800">
+                Patient care plans
+              </h3>
 
-            <p className="mt-1 text-xs text-slate-400">
-              Review patient conditions and current medications.
-            </p>
-          </div>
+              <p className="mt-1 text-xs text-slate-400">
+                Review patient conditions and current medications.
+              </p>
+            </div>
 
-          <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-700 outline-none transition focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-50"
-            >
-              <option value="ALL">All Plans</option>
-              <option value="ACTIVE">Active</option>
-              <option value="REVIEW">Needs Review</option>
-            </select>
+            <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-700 outline-none transition focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-50"
+              >
+                <option value="ALL">All Plans</option>
+                <option value="ACTIVE">Active</option>
+                <option value="REVIEW">Needs Review</option>
+              </select>
 
-            <div className="relative w-full sm:w-72">
-              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">
-                ⌕
-              </span>
+              <div className="relative w-full sm:w-72">
+                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+                  ⌕
+                </span>
 
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search patients or plans..."
-                className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-50"
-              />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search patients or plans..."
+                  className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-50"
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {error && (
         <div className="mt-4 flex items-center justify-between rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">

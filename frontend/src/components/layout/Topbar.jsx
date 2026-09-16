@@ -44,19 +44,21 @@ function Topbar({ title, subtitle }) {
       {/* Right side */}
       <div className="flex items-center gap-2 sm:gap-4">
 
-        {/* Search */}
-        <button
-          className="hidden h-10 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 text-xs text-slate-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 md:flex"
-          onClick={() => {}}
-        >
-          <span className="text-sm">⌕</span>
+        {/* Search (Doctors & Admin only) */}
+        {role !== "PATIENT" && (
+          <button
+            className="hidden h-10 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 text-xs text-slate-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 md:flex"
+            onClick={() => navigate("/patients")}
+          >
+            <span className="text-sm">⌕</span>
 
-          <span>Search patients...</span>
+            <span>Search patients...</span>
 
-          <span className="ml-4 rounded-md border border-slate-200 bg-white px-1.5 py-0.5 text-[9px] text-slate-400">
-            /
-          </span>
-        </button>
+            <span className="ml-4 rounded-md border border-slate-200 bg-white px-1.5 py-0.5 text-[9px] text-slate-400">
+              /
+            </span>
+          </button>
+        )}
 
         {/* Notification */}
         <button

@@ -1,0 +1,7 @@
+# MediSphere Cognitive Twin - Milestone 2 AI & Federated Learning Engine
+numpy>=1.24.0
+scipy>=1.10.0
+scikit-learn>=1.2.0
+# tensorflow>=2.15.0
+# tensorflow-federated>=0.68.0
+# shap>=0.44.0

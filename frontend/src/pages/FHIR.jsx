@@ -213,30 +213,8 @@ function FHIR() {
         <div className="absolute -bottom-32 right-28 h-72 w-72 rounded-full bg-white/10" />
 
         <div className="absolute right-12 top-1/2 hidden -translate-y-1/2 lg:flex">
-          <div className="flex h-36 w-36 items-center justify-center rounded-full border border-white/20 bg-white/10 text-3xl font-black text-white backdrop-blur-sm">
+          <div className="flex h-28 w-28 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-2xl font-black text-white backdrop-blur-sm">
             FHIR
-          </div>
-        </div>
-      </section>
-
-      {/* Info */}
-      <section className="mt-5 rounded-2xl border border-blue-100 bg-blue-50 px-5 py-4">
-        <div className="flex gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-100 font-bold text-blue-600">
-            i
-          </div>
-
-          <div>
-            <p className="text-xs font-bold text-blue-800">
-              FHIR interoperability
-            </p>
-
-            <p className="mt-1 text-xs leading-5 text-blue-700">
-              FHIR resources provide a structured format for
-              exchanging healthcare information between systems.
-              MediSphere currently supports submitting resources
-              through the backend FHIR endpoint.
-            </p>
           </div>
         </div>
       </section>

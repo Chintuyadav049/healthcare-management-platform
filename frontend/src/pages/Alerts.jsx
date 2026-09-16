@@ -255,50 +255,22 @@ function Alerts() {
       subtitle="Monitor abnormal physiological measurements and patient safety indicators"
     >
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 px-7 py-9 shadow-xl shadow-blue-500/10 sm:px-10">
-        <div className="relative z-10 max-w-3xl">
-          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-blue-100">
-            Clinical Monitoring
-          </p>
-
-          <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Clinical Alerts
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 p-6 text-white shadow-md sm:p-8">
+        <div className="relative z-10 max-w-2xl">
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            Clinical Alerts & Triage
           </h2>
-
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-blue-50">
-            Identify abnormal patient measurements and prioritize
-            clinical attention using the MediSphere monitoring system.
+          <p className="mt-2 text-xs leading-relaxed text-blue-100 sm:text-sm">
+            Real-time automated threshold alerts based on continuous patient vital telemetry.
           </p>
         </div>
 
         <div className="absolute -right-20 -top-24 h-64 w-64 rounded-full bg-white/10" />
-
         <div className="absolute -bottom-32 right-28 h-72 w-72 rounded-full bg-white/10" />
 
         <div className="absolute right-12 top-1/2 hidden -translate-y-1/2 lg:flex">
-          <div className="flex h-36 w-36 items-center justify-center rounded-full border border-white/20 bg-white/10 text-5xl text-white backdrop-blur-sm">
+          <div className="flex h-28 w-28 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-4xl text-white backdrop-blur-sm">
             !
-          </div>
-        </div>
-      </section>
-
-      {/* Notice */}
-      <section className="mt-5 rounded-2xl border border-amber-100 bg-amber-50 px-5 py-4">
-        <div className="flex gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
-            !
-          </div>
-
-          <div>
-            <p className="text-xs font-bold text-amber-800">
-              Monitoring-based alerts
-            </p>
-
-            <p className="mt-1 text-xs leading-5 text-amber-700">
-              These alerts are generated from available vital
-              measurements and are intended for system monitoring.
-              They are not medical diagnoses.
-            </p>
           </div>
         </div>
       </section>

@@ -12,12 +12,18 @@ import Alerts from "./pages/Alerts";
 import CarePlans from "./pages/CarePlans";
 import FHIR from "./pages/FHIR";
 import Consent from "./pages/Consent";
+import Doctors from "./pages/Doctors";
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ children, allowedRoles }) {
   const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
 
   if (!token) {
     return <Navigate to="/" replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(role)) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
@@ -46,22 +52,32 @@ function App() {
           }
         />
 
-        {/* Patients */}
+        {/* Patients (Doctors & Admin only) */}
         <Route
           path="/patients"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["ADMIN", "DOCTOR"]}>
               <Patients />
             </ProtectedRoute>
           }
         />
 
-        {/* Patient 360 */}
+        {/* Patient 360 (Doctors & Admin only) */}
         <Route
           path="/patients/:patientId"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["ADMIN", "DOCTOR"]}>
               <PatientDetails />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Doctors (Admin Only) */}
+        <Route
+          path="/doctors"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <Doctors />
             </ProtectedRoute>
           }
         />
@@ -75,15 +91,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
-        <Route
-  path="/health-twins"
-  element={
-    <ProtectedRoute>
-      <HealthTwins />
-    </ProtectedRoute>
-  }
-/>
 
 <Route
   path="/health-twins/:patientId"
@@ -133,7 +140,7 @@ function App() {
 <Route
   path="/fhir"
   element={
-    <ProtectedRoute>
+    <ProtectedRoute allowedRoles={["ADMIN", "DOCTOR"]}>
       <FHIR />
     </ProtectedRoute>
   }

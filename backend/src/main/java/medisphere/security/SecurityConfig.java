@@ -66,6 +66,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/doctors/**")
                         .hasRole("ADMIN")
 
+                        // AI and Federated Learning APIs
+                        .requestMatchers("/api/ai/**")
+                        .hasAnyRole("ADMIN", "DOCTOR", "PATIENT")
+
+                        .requestMatchers("/api/federated/**")
+                        .hasAnyRole("ADMIN", "DOCTOR", "PATIENT")
+
                         // Any remaining API
                         .requestMatchers("/api/**")
                         .authenticated()

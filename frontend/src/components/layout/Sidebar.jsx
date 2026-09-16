@@ -14,27 +14,50 @@ function Sidebar() {
     return location.pathname.startsWith(path);
   };
 
-  const mainNavigation = [
-    { label: "Dashboard", path: "/dashboard", icon: "⌂" },
-    { label: "Patients", path: "/patients", icon: "♙" },
-    { label: "Health Twins", path: "/health-twins", icon: "◈" },
-    { label: "Vitals", path: "/vitals", icon: "♡" },
-    { label: "Risk Predictions", path: "/risk-predictions", icon: "△" },
-  ];
-
-  const clinicalNavigation = [
-    { label: "Alerts", path: "/alerts", icon: "!" },
-    { label: "Care Plans", path: "/careplans", icon: "✓" },
-    { label: "FHIR Resources", path: "/fhir", icon: "◉" },
-    { label: "Consent", path: "/consent", icon: "◇" },
-  ];
+  let mainNavigation = [];
+  let clinicalNavigation = [];
 
   if (role === "ADMIN") {
-    clinicalNavigation.push({
-      label: "Doctors",
-      path: "/doctors",
-      icon: "⚕",
-    });
+    mainNavigation = [
+      { label: "Admin Dashboard", path: "/dashboard", icon: "⌂" },
+      { label: "Doctors", path: "/doctors", icon: "⚕" },
+      { label: "Patients", path: "/patients", icon: "♙" },
+      { label: "Health Twins", path: "/health-twins", icon: "◈" },
+      { label: "Vitals", path: "/vitals", icon: "♡" },
+      { label: "Risk Predictions & FL", path: "/risk-predictions", icon: "△" },
+    ];
+    clinicalNavigation = [
+      { label: "System Alerts", path: "/alerts", icon: "!" },
+      { label: "Care Plans", path: "/careplans", icon: "✓" },
+      { label: "FHIR Resources", path: "/fhir", icon: "◉" },
+      { label: "Consent Registry", path: "/consent", icon: "◇" },
+    ];
+  } else if (role === "DOCTOR") {
+    mainNavigation = [
+      { label: "Doctor Dashboard", path: "/dashboard", icon: "⌂" },
+      { label: "Patient Roster", path: "/patients", icon: "♙" },
+      { label: "Health Twins", path: "/health-twins", icon: "◈" },
+      { label: "Vitals Monitoring", path: "/vitals", icon: "♡" },
+      { label: "AI Risk Models", path: "/risk-predictions", icon: "△" },
+    ];
+    clinicalNavigation = [
+      { label: "Clinical Alerts", path: "/alerts", icon: "!" },
+      { label: "Care Plans", path: "/careplans", icon: "✓" },
+      { label: "FHIR Resources", path: "/fhir", icon: "◉" },
+      { label: "Patient Consent", path: "/consent", icon: "◇" },
+    ];
+  } else {
+    // PATIENT
+    mainNavigation = [
+      { label: "My Health Twin", path: "/dashboard", icon: "⌂" },
+      { label: "Digital Twin 360°", path: "/health-twins", icon: "◈" },
+      { label: "My Vitals", path: "/vitals", icon: "♡" },
+      { label: "My Risk Assessment", path: "/risk-predictions", icon: "△" },
+    ];
+    clinicalNavigation = [
+      { label: "My Care Plans", path: "/careplans", icon: "✓" },
+      { label: "My Consent & Privacy", path: "/consent", icon: "◇" },
+    ];
   }
 
   const renderNavigation = (items) =>

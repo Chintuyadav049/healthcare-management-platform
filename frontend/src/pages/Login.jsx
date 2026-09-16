@@ -173,9 +173,8 @@ function Login() {
 
             {/* HEADING */}
 
-            <div className="mb-8">
-
-              <p className="mb-3 text-xs font-bold tracking-[0.2em] text-cyan-400">
+            <div className="mb-6">
+              <p className="mb-2 text-xs font-bold tracking-[0.2em] text-cyan-400">
                 WELCOME BACK
               </p>
 
@@ -183,10 +182,60 @@ function Login() {
                 Sign in to your account
               </h2>
 
-              <p className="mt-3 text-sm leading-6 text-slate-500">
-                Access your MediSphere clinical intelligence dashboard.
+              <p className="mt-2 text-xs leading-5 text-slate-400">
+                Select a role to quick-fill credentials or enter your clinical account details.
               </p>
 
+              {/* 1-Click Role Quick Fill */}
+              <div className="mt-4 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUsername("admin");
+                    setPassword("admin123");
+                  }}
+                  className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition ${
+                    username === "admin"
+                      ? "border-purple-500 bg-purple-500/20 text-purple-300"
+                      : "border-slate-800 bg-slate-900/80 text-slate-400 hover:border-slate-700 hover:text-white"
+                  }`}
+                >
+                  <span>👑</span>
+                  <span>Admin</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUsername("doctor");
+                    setPassword("doctor123");
+                  }}
+                  className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition ${
+                    username === "doctor"
+                      ? "border-cyan-500 bg-cyan-500/20 text-cyan-300"
+                      : "border-slate-800 bg-slate-900/80 text-slate-400 hover:border-slate-700 hover:text-white"
+                  }`}
+                >
+                  <span>🩺</span>
+                  <span>Doctor</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUsername("patient");
+                    setPassword("patient123");
+                  }}
+                  className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition ${
+                    username === "patient"
+                      ? "border-emerald-500 bg-emerald-500/20 text-emerald-300"
+                      : "border-slate-800 bg-slate-900/80 text-slate-400 hover:border-slate-700 hover:text-white"
+                  }`}
+                >
+                  <span>👤</span>
+                  <span>Patient</span>
+                </button>
+              </div>
             </div>
 
             {/* FORM */}

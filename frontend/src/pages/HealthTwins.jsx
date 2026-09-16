@@ -5,6 +5,8 @@ import API from "../services/api";
 
 function HealthTwins() {
   const navigate = useNavigate();
+  const role = localStorage.getItem("role") || "PATIENT";
+  const username = localStorage.getItem("username") || "patient";
 
   const [twins, setTwins] = useState([]);
   const [search, setSearch] = useState("");
@@ -17,8 +19,20 @@ function HealthTwins() {
       setError("");
 
       const response = await API.get("/health-twins");
+      const allTwins = Array.isArray(response.data) ? response.data : [];
 
-      setTwins(Array.isArray(response.data) ? response.data : []);
+      if (role === "PATIENT") {
+        // Patients can ONLY view their own health twin
+        const myTwin = allTwins.filter(
+          (t) =>
+            t.patientId === "patient-001" ||
+            (t.patientName && t.patientName.toLowerCase().includes("john")) ||
+            (t.patientId && t.patientId.toLowerCase() === username.toLowerCase())
+        );
+        setTwins(myTwin.length > 0 ? myTwin : allTwins.slice(0, 1));
+      } else {
+        setTwins(allTwins);
+      }
     } catch (err) {
       console.error("Failed to load health twins:", err);
 
@@ -33,7 +47,7 @@ function HealthTwins() {
 
   useEffect(() => {
     loadTwins();
-  }, []);
+  }, [role]);
 
   const filteredTwins = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -65,24 +79,19 @@ function HealthTwins() {
 
   return (
     <AppLayout
-      title="Health Twins"
-      subtitle="Digital intelligence for personalized healthcare"
+      title={role === "PATIENT" ? "My Health Twin" : "Health Twins"}
+      subtitle={role === "PATIENT" ? "Your personalized health twin" : "Digital health twin models"}
     >
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 px-7 py-9 shadow-xl shadow-blue-500/10 sm:px-10">
-        <div className="relative z-10 max-w-3xl">
-          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-blue-100">
-            MediSphere Cognitive Intelligence
-          </p>
-
-          <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Digital Health Twins
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 p-6 text-white shadow-md">
+        <div className="relative z-10 max-w-2xl">
+          <h2 className="text-2xl font-bold tracking-tight">
+            {role === "PATIENT" ? "My Digital Health Twin" : "Cognitive Health Twins"}
           </h2>
-
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-blue-50">
-            Build a connected digital representation of each patient's
-            health state using clinical information and physiological
-            measurements.
+          <p className="mt-2 text-xs text-blue-100">
+            {role === "PATIENT"
+              ? "Your current health twin profile and active medications."
+              : "Digital models based on clinical measurements."}
           </p>
         </div>
 

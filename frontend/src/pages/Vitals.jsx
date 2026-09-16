@@ -3,10 +3,11 @@ import AppLayout from "../components/layout/AppLayout";
 import API from "../services/api";
 
 function Vitals() {
+  const role = localStorage.getItem("role") || "PATIENT";
   const [vitals, setVitals] = useState([]);
   const [patients, setPatients] = useState([]);
 
-  const [selectedPatient, setSelectedPatient] = useState("ALL");
+  const [selectedPatient, setSelectedPatient] = useState(role === "PATIENT" ? "patient-001" : "ALL");
   const [search, setSearch] = useState("");
 
   const [loading, setLoading] = useState(true);
@@ -17,23 +18,21 @@ function Vitals() {
       setLoading(true);
       setError("");
 
-      const [vitalsResponse, patientsResponse] =
-        await Promise.all([
+      if (role === "PATIENT") {
+        // Patient only sees their own vitals
+        const vitalsResponse = await API.get("/vitals/patient/patient-001");
+        const myVitals = Array.isArray(vitalsResponse.data) ? vitalsResponse.data : [];
+        setVitals(myVitals);
+        setPatients([{ patientId: "patient-001", name: "John Doe" }]);
+        setSelectedPatient("patient-001");
+      } else {
+        const [vitalsResponse, patientsResponse] = await Promise.all([
           API.get("/vitals"),
           API.get("/patients"),
         ]);
-
-      setVitals(
-        Array.isArray(vitalsResponse.data)
-          ? vitalsResponse.data
-          : []
-      );
-
-      setPatients(
-        Array.isArray(patientsResponse.data)
-          ? patientsResponse.data
-          : []
-      );
+        setVitals(Array.isArray(vitalsResponse.data) ? vitalsResponse.data : []);
+        setPatients(Array.isArray(patientsResponse.data) ? patientsResponse.data : []);
+      }
     } catch (err) {
       console.error("Failed to load vitals:", err);
 
@@ -107,24 +106,19 @@ function Vitals() {
 
   return (
     <AppLayout
-      title="Vitals Monitoring"
-      subtitle="Real-time physiological measurements across patients"
+      title={role === "PATIENT" ? "My Vitals" : "Vitals Monitoring"}
+      subtitle={role === "PATIENT" ? "Your physiological measurements" : "Real-time physiological measurements"}
     >
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 px-7 py-9 shadow-xl shadow-blue-500/10 sm:px-10">
-        <div className="relative z-10 max-w-3xl">
-          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-blue-100">
-            Clinical Monitoring
-          </p>
-
-          <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Patient Vitals
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 p-6 text-white shadow-md">
+        <div className="relative z-10 max-w-2xl">
+          <h2 className="text-2xl font-bold tracking-tight">
+            {role === "PATIENT" ? "My Vital Signs" : "Patient Vitals Monitoring"}
           </h2>
-
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-blue-50">
-            Monitor heart rate, blood pressure, temperature and
-            oxygen saturation collected from the MediSphere
-            healthcare platform.
+          <p className="mt-2 text-xs leading-relaxed text-blue-50">
+            {role === "PATIENT"
+              ? "Track your heart rate, blood pressure, temperature, and blood oxygen saturation."
+              : "Continuous vital sign telemetry collected across clinical streams."}
           </p>
         </div>
 
@@ -201,54 +195,56 @@ function Vitals() {
             </h3>
           </div>
 
-          <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
-            {/* Patient Filter */}
-            <select
-              value={selectedPatient}
-              onChange={(e) =>
-                setSelectedPatient(e.target.value)
-              }
-              className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-700 outline-none transition focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-50"
-            >
-              <option value="ALL">
-                All Patients
-              </option>
-
-              {patients.map((patient) => {
-                const id =
-                  patient.patientId ||
-                  patient.id;
-
-                return (
-                  <option
-                    key={id}
-                    value={id}
-                  >
-                    {patient.name ||
-                      patient.patientName ||
-                      id}
-                  </option>
-                );
-              })}
-            </select>
-
-            {/* Search */}
-            <div className="relative w-full sm:w-72">
-              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">
-                ⌕
-              </span>
-
-              <input
-                type="text"
-                value={search}
+          {role !== "PATIENT" && (
+            <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
+              {/* Patient Filter */}
+              <select
+                value={selectedPatient}
                 onChange={(e) =>
-                  setSearch(e.target.value)
+                  setSelectedPatient(e.target.value)
                 }
-                placeholder="Search patient..."
-                className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-50"
-              />
+                className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-700 outline-none transition focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-50"
+              >
+                <option value="ALL">
+                  All Patients
+                </option>
+
+                {patients.map((patient) => {
+                  const id =
+                    patient.patientId ||
+                    patient.id;
+
+                  return (
+                    <option
+                      key={id}
+                      value={id}
+                    >
+                      {patient.name ||
+                        patient.patientName ||
+                        id}
+                    </option>
+                  );
+                })}
+              </select>
+
+              {/* Search */}
+              <div className="relative w-full sm:w-72">
+                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+                  ⌕
+                </span>
+
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) =>
+                    setSearch(e.target.value)
+                  }
+                  placeholder="Search patient..."
+                  className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-50"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
