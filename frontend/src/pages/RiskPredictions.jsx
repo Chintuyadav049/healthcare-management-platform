@@ -12,7 +12,9 @@ function RiskPredictions() {
   const [validationSubTab, setValidationSubTab] = useState("accuracy"); // accuracy, convergence, shap, calibration, bias, guidelines
 
   // Data states
-  const [selectedPatientId, setSelectedPatientId] = useState("patient-001");
+  const [selectedPatientId, setSelectedPatientId] = useState(
+    role === "PATIENT" ? (localStorage.getItem("patientId") || "patient-001") : "patient-001"
+  );
   const [patients, setPatients] = useState([]);
   const [prediction, setPrediction] = useState(null);
   const [federatedStatus, setFederatedStatus] = useState(null);

@@ -20,11 +20,13 @@ function Vitals() {
 
       if (role === "PATIENT") {
         // Patient only sees their own vitals
-        const vitalsResponse = await API.get("/vitals/patient/patient-001");
+        const currentPatientId = localStorage.getItem("patientId") || "patient-001";
+        const currentFullName = localStorage.getItem("fullName") || "Me";
+        const vitalsResponse = await API.get(`/vitals/patient/${currentPatientId}`);
         const myVitals = Array.isArray(vitalsResponse.data) ? vitalsResponse.data : [];
         setVitals(myVitals);
-        setPatients([{ patientId: "patient-001", name: "John Doe" }]);
-        setSelectedPatient("patient-001");
+        setPatients([{ patientId: currentPatientId, name: currentFullName }]);
+        setSelectedPatient(currentPatientId);
       } else {
         const [vitalsResponse, patientsResponse] = await Promise.all([
           API.get("/vitals"),

@@ -9,14 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
-
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -25,7 +19,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-            HttpSecurity http) throws Exception {
+            HttpSecurity http,
+            JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
@@ -71,6 +66,10 @@ public class SecurityConfig {
                         .hasAnyRole("ADMIN", "DOCTOR", "PATIENT")
 
                         .requestMatchers("/api/federated/**")
+                        .hasAnyRole("ADMIN", "DOCTOR", "PATIENT")
+
+                        // Continuous Monitoring & Alerts APIs (Milestone 3)
+                        .requestMatchers("/api/alerts/**")
                         .hasAnyRole("ADMIN", "DOCTOR", "PATIENT")
 
                         // Any remaining API

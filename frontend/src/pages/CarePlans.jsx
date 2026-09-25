@@ -30,11 +30,12 @@ function CarePlans() {
       const allTwins = Array.isArray(twinsResponse.data) ? twinsResponse.data : [];
 
       if (role === "PATIENT") {
+        const currentPatientId = localStorage.getItem("patientId") || "patient-001";
         const myTwins = allTwins.filter(
-          (t) => t.patientId === "patient-001" || (t.patientName && t.patientName.toLowerCase().includes("john"))
+          (t) => t.patientId === currentPatientId || (t.patientName && t.patientName.toLowerCase().includes(currentPatientId.toLowerCase()))
         );
         setTwins(myTwins.length > 0 ? myTwins : allTwins.slice(0, 1));
-        setPatients(allPatients.filter((p) => p.patientId === "patient-001" || p.id === "patient-001"));
+        setPatients(allPatients.filter((p) => (p.patientId || p.id) === currentPatientId));
       } else {
         setPatients(allPatients);
         setTwins(allTwins);

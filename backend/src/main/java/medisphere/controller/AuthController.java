@@ -31,10 +31,6 @@ public class AuthController {
     public RegisterResponse register(
             @RequestBody RegisterRequest request) {
 
-        return authService.register(
-                request.getUsername(),
-                request.getPassword(),
-                request.getRole()
-        );
+        return authService.register(request);
     }
 }

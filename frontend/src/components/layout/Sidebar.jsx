@@ -55,6 +55,7 @@ function Sidebar() {
       { label: "My Risk Assessment", path: "/risk-predictions", icon: "△" },
     ];
     clinicalNavigation = [
+      { label: "My Alerts & Wearables", path: "/alerts", icon: "!" },
       { label: "My Care Plans", path: "/careplans", icon: "✓" },
       { label: "My Consent & Privacy", path: "/consent", icon: "◇" },
     ];

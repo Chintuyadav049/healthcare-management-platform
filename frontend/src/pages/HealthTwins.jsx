@@ -23,10 +23,11 @@ function HealthTwins() {
 
       if (role === "PATIENT") {
         // Patients can ONLY view their own health twin
+        const currentPatientId = localStorage.getItem("patientId") || "patient-001";
         const myTwin = allTwins.filter(
           (t) =>
-            t.patientId === "patient-001" ||
-            (t.patientName && t.patientName.toLowerCase().includes("john")) ||
+            t.patientId === currentPatientId ||
+            (t.patientName && t.patientName.toLowerCase().includes(username.toLowerCase())) ||
             (t.patientId && t.patientId.toLowerCase() === username.toLowerCase())
         );
         setTwins(myTwin.length > 0 ? myTwin : allTwins.slice(0, 1));

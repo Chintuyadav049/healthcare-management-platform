@@ -8,6 +8,8 @@ function Dashboard() {
 
   const userRole = localStorage.getItem("role") || "DOCTOR";
   const username = localStorage.getItem("username") || "Physician";
+  const currentFullName = localStorage.getItem("fullName") || username;
+  const currentPatientId = localStorage.getItem("patientId") || "patient-001";
 
   // Data states
   const [patients, setPatients] = useState([]);
@@ -453,6 +455,26 @@ function Dashboard() {
               <span>Converged Loss: <strong>0.181</strong></span>
             </div>
           </div>
+
+          <div className="rounded-xl border border-rose-100 bg-rose-50/70 p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-sm">⚡</span>
+                <span className="text-xs font-bold text-rose-900">Milestone 3: Continuous Monitoring</span>
+              </div>
+              <span className="font-mono text-xs font-bold text-rose-700">3.2m SLA • 88.4% Prec</span>
+            </div>
+            <div className="flex items-center justify-between text-[11px] text-rose-800/90">
+              <span>Kafka Stream: <strong>128 pkts/s</strong></span>
+              <span>False Alert: <strong>2.1% (&lt;3%)</strong></span>
+            </div>
+            <button
+              onClick={() => navigate("/alerts")}
+              className="mt-1 w-full rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold py-1.5 transition text-center block"
+            >
+              Open Alert Command Center →
+            </button>
+          </div>
         </div>
       </section>
     </div>
@@ -573,6 +595,51 @@ function Dashboard() {
           <p className="mt-3 text-xs text-slate-400">Validated federated CVD model</p>
         </div>
       </section>
+
+      {/* Milestone 3 Real-Time Continuous Monitoring & AFib Alert Banner */}
+      <div className="rounded-2xl border border-rose-200 bg-gradient-to-r from-rose-50 via-white to-rose-50/50 p-5 sm:p-6 shadow-sm">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-600 text-lg font-bold text-white shadow-md shadow-rose-600/30">
+              ⚡
+            </div>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-rose-800">
+                  Continuous Monitoring Alert (Milestone 3)
+                </span>
+                <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-black text-rose-700">
+                  CRITICAL • 3.2m RESPONSE
+                </span>
+                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">
+                  Apple Watch Ultra 2 via Kafka
+                </span>
+              </div>
+              <h4 className="text-base font-bold text-slate-900 mt-1">
+                Real-time Monitoring: Alert for Sarah M. - HR spike 145 bpm. AI analysis: Possible AFib with 89% confidence. Auto-notified cardiologist.
+              </h4>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Automated clinical rule triggered: ACC/AHA Class I Atrial Fibrillation. Auto-routed to Dr. Marcus Vance. Response latency reduced from 2.4 hours to <strong>3.2 minutes</strong>.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              onClick={() => navigate("/alerts")}
+              className="rounded-xl bg-rose-600 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-rose-600/20 hover:bg-rose-700 transition"
+            >
+              Open Alert Center →
+            </button>
+            <button
+              onClick={() => navigate("/health-twins/patient-002")}
+              className="rounded-xl border border-rose-200 bg-white px-4 py-2.5 text-xs font-bold text-rose-700 hover:bg-rose-50"
+            >
+              Sarah M. Twin
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Clinical Triage & High-Risk Alert Banner */}
       <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-5 sm:p-6 shadow-sm">
@@ -698,160 +765,185 @@ function Dashboard() {
   // ----------------------------------------------------
   // 3. PATIENT PORTAL VIEW (Clean & Simple)
   // ----------------------------------------------------
-  const renderPatientDashboard = () => (
-    <div className="space-y-6">
-      {/* Patient Welcome Banner - Clean & Simple */}
-      <section className="rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 p-6 text-white shadow-md">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">
-              Welcome, John Doe
-            </h2>
-            <p className="mt-1 text-xs text-blue-100">
-              Personal health twin and vital sign summary.
-            </p>
-          </div>
+  const renderPatientDashboard = () => {
+    const myTwin = healthTwins.find(
+      (t) =>
+        t.patientId === currentPatientId ||
+        (t.patientName && t.patientName.toLowerCase().includes(username.toLowerCase())) ||
+        (t.name && t.name.toLowerCase().includes(username.toLowerCase()))
+    ) || healthTwins[0] || null;
 
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => navigate("/risk-predictions")}
-              className="rounded-xl bg-white px-4 py-2 text-xs font-bold text-blue-700 shadow-sm transition hover:bg-blue-50"
-            >
-              CVD Risk: 24.3% →
-            </button>
-            <button
-              onClick={() => navigate("/vitals")}
-              className="rounded-xl border border-white/30 bg-white/10 px-4 py-2 text-xs font-semibold text-white transition hover:bg-white/20"
-            >
-              My Vitals
-            </button>
-            <button
-              onClick={() => navigate("/careplans")}
-              className="rounded-xl border border-white/30 bg-white/10 px-4 py-2 text-xs font-semibold text-white transition hover:bg-white/20"
-            >
-              My Care Plans
-            </button>
-          </div>
-        </div>
-      </section>
+    const myVital = vitals.find((v) => v.patientId === currentPatientId) || vitals[0] || null;
+    const bpStr = myVital ? `${Math.round(myVital.systolicBP || 120)}/${Math.round(myVital.diastolicBP || 80)}` : "120/80";
+    const hrVal = myVital ? Math.round(myVital.heartRate || 72) : 72;
+    const spo2Val = myVital ? Math.round(myVital.oxygenSaturation || 98) : 98;
 
-      {/* Patient 10-Year CVD Risk Card */}
-      <section className="rounded-2xl border border-blue-200 bg-white p-6 shadow-sm">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-amber-50 border border-amber-200">
-              <span className="text-xl font-black text-amber-700">24.3%</span>
-            </div>
+    const conditionsList = myTwin?.conditions && myTwin.conditions.length > 0
+      ? myTwin.conditions
+      : ["Hypertension", "Type 2 Diabetes"];
+
+    const medicationsList = myTwin?.medications && myTwin.medications.length > 0
+      ? myTwin.medications
+      : ["Amlodipine 5mg", "Metformin 500mg"];
+
+    return (
+      <div className="space-y-6">
+        {/* Patient Welcome Banner - Clean & Simple */}
+        <section className="rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 p-6 text-white shadow-md">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">
-                  Cardiovascular Risk
-                </span>
-                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800">
-                  High Risk
-                </span>
-              </div>
-              <h3 className="mt-0.5 text-base font-bold text-slate-800">
-                10-Year Predicted ASCVD Risk: 24.3%
-              </h3>
-              <p className="mt-0.5 text-xs text-slate-500">
-                Top risk drivers: <strong>HbA1c (+8.0%)</strong> and <strong>Blood Pressure (+6.0%)</strong>.
+              <h2 className="text-2xl font-bold tracking-tight">
+                Welcome, {currentFullName}
+              </h2>
+              <p className="mt-1 text-xs text-blue-100">
+                Personal health twin and continuous vital telemetry (ID: {currentPatientId}).
               </p>
             </div>
+
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => navigate("/risk-predictions")}
+                className="rounded-xl bg-white px-4 py-2 text-xs font-bold text-blue-700 shadow-sm transition hover:bg-blue-50"
+              >
+                CVD Risk: 24.3% →
+              </button>
+              <button
+                onClick={() => navigate("/vitals")}
+                className="rounded-xl border border-white/30 bg-white/10 px-4 py-2 text-xs font-semibold text-white transition hover:bg-white/20"
+              >
+                My Vitals
+              </button>
+              <button
+                onClick={() => navigate("/alerts")}
+                className="rounded-xl border border-white/30 bg-white/10 px-4 py-2 text-xs font-semibold text-white transition hover:bg-white/20"
+              >
+                My Alerts
+              </button>
+              <button
+                onClick={() => navigate("/careplans")}
+                className="rounded-xl border border-white/30 bg-white/10 px-4 py-2 text-xs font-semibold text-white transition hover:bg-white/20"
+              >
+                My Care Plans
+              </button>
+            </div>
           </div>
+        </section>
 
-          <button
-            onClick={() => navigate("/risk-predictions")}
-            className="rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-blue-700"
-          >
-            View SHAP Breakdown →
-          </button>
-        </div>
-      </section>
+        {/* Patient 10-Year CVD Risk Card */}
+        <section className="rounded-2xl border border-blue-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-amber-50 border border-amber-200">
+                <span className="text-xl font-black text-amber-700">24.3%</span>
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">
+                    Cardiovascular Risk
+                  </span>
+                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800">
+                    High Risk
+                  </span>
+                </div>
+                <h3 className="mt-0.5 text-base font-bold text-slate-800">
+                  10-Year Predicted ASCVD Risk: 24.3%
+                </h3>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  Top risk drivers: <strong>HbA1c (+8.0%)</strong> and <strong>Blood Pressure (+6.0%)</strong>.
+                </p>
+              </div>
+            </div>
 
-      {/* Physiological Vitals Summary */}
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500">Blood Pressure</p>
-          <div className="mt-1 flex items-baseline justify-between">
-            <p className="text-xl font-bold text-slate-800">142/88</p>
-            <span className="text-[11px] text-slate-400">mmHg</span>
-          </div>
-          <span className="mt-2 inline-block rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700">
-            Stage 2 Hypertension
-          </span>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500">Heart Rate</p>
-          <div className="mt-1 flex items-baseline justify-between">
-            <p className="text-xl font-bold text-slate-800">78</p>
-            <span className="text-[11px] text-slate-400">bpm</span>
-          </div>
-          <span className="mt-2 inline-block rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
-            Normal
-          </span>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500">HbA1c</p>
-          <div className="mt-1 flex items-baseline justify-between">
-            <p className="text-xl font-bold text-slate-800">7.4%</p>
-            <span className="text-[11px] text-slate-400">Target &lt; 7.0</span>
-          </div>
-          <span className="mt-2 inline-block rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700">
-            Elevated
-          </span>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-semibold text-slate-500">SpO2</p>
-          <div className="mt-1 flex items-baseline justify-between">
-            <p className="text-xl font-bold text-slate-800">97%</p>
-            <span className="text-[11px] text-slate-400">Optimal</span>
-          </div>
-          <span className="mt-2 inline-block rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
-            Normal
-          </span>
-        </div>
-      </section>
-
-      {/* Conditions & Medications */}
-      <section className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 className="text-sm font-bold text-slate-800">My Health Profile</h3>
-            <button onClick={() => navigate("/health-twins")} className="text-xs font-bold text-blue-600 hover:underline">
-              Twin Details →
+            <button
+              onClick={() => navigate("/risk-predictions")}
+              className="rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-blue-700"
+            >
+              View SHAP Breakdown →
             </button>
           </div>
+        </section>
 
-          <div className="mt-3 space-y-3">
-            <div>
-              <p className="text-xs font-medium text-slate-500">Conditions</p>
-              <div className="mt-1.5 flex flex-wrap gap-1.5">
-                <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
-                  Hypertension
-                </span>
-                <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
-                  Type 2 Diabetes
-                </span>
-              </div>
+        {/* Physiological Vitals Summary */}
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="text-xs font-semibold text-slate-500">Blood Pressure</p>
+            <div className="mt-1 flex items-baseline justify-between">
+              <p className="text-xl font-bold text-slate-800">{bpStr}</p>
+              <span className="text-[11px] text-slate-400">mmHg</span>
+            </div>
+            <span className="mt-2 inline-block rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+              Stage 2 Hypertension
+            </span>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="text-xs font-semibold text-slate-500">Heart Rate</p>
+            <div className="mt-1 flex items-baseline justify-between">
+              <p className="text-xl font-bold text-slate-800">{hrVal}</p>
+              <span className="text-[11px] text-slate-400">bpm</span>
+            </div>
+            <span className="mt-2 inline-block rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+              Normal
+            </span>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="text-xs font-semibold text-slate-500">HbA1c</p>
+            <div className="mt-1 flex items-baseline justify-between">
+              <p className="text-xl font-bold text-slate-800">7.4%</p>
+              <span className="text-[11px] text-slate-400">Target &lt; 7.0</span>
+            </div>
+            <span className="mt-2 inline-block rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+              Elevated
+            </span>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="text-xs font-semibold text-slate-500">SpO2</p>
+            <div className="mt-1 flex items-baseline justify-between">
+              <p className="text-xl font-bold text-slate-800">{spo2Val}%</p>
+              <span className="text-[11px] text-slate-400">Optimal</span>
+            </div>
+            <span className="mt-2 inline-block rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+              Normal
+            </span>
+          </div>
+        </section>
+
+        {/* Conditions & Medications */}
+        <section className="grid gap-4 lg:grid-cols-2">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-sm font-bold text-slate-800">My Health Profile</h3>
+              <button onClick={() => navigate("/health-twins")} className="text-xs font-bold text-blue-600 hover:underline">
+                Twin Details →
+              </button>
             </div>
 
-            <div>
-              <p className="text-xs font-medium text-slate-500">Current Medications</p>
-              <div className="mt-1.5 flex flex-wrap gap-1.5">
-                <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700">
-                  Amlodipine 5mg
-                </span>
-                <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700">
-                  Metformin 500mg
-                </span>
+            <div className="mt-3 space-y-3">
+              <div>
+                <p className="text-xs font-medium text-slate-500">Conditions</p>
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {conditionsList.map((cond, idx) => (
+                    <span key={idx} className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+                      {cond}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-slate-500">Current Medications</p>
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {medicationsList.map((med, idx) => (
+                    <span key={idx} className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700">
+                      {med}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -880,6 +972,7 @@ function Dashboard() {
       </section>
     </div>
   );
+};
 
   return (
     <AppLayout

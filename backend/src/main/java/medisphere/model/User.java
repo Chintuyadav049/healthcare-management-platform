@@ -12,6 +12,8 @@ public class User {
     private String username;
     private String password;
     private String role;
+    private String patientId;
+    private String fullName;
 
     public User() {
     }
@@ -20,6 +22,14 @@ public class User {
         this.username = username;
         this.password = password;
         this.role = role;
+    }
+
+    public User(String username, String password, String role, String patientId, String fullName) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.patientId = patientId;
+        this.fullName = fullName;
     }
 
     public String getId() {
@@ -52,5 +62,21 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(String patientId) {
+        this.patientId = patientId;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 }

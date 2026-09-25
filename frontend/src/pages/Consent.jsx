@@ -45,12 +45,13 @@ function Consent() {
         ? response.data
         : response.data?.content || [];
 
+      const currentPatientId = localStorage.getItem("patientId") || "patient-001";
       const data =
         role === "PATIENT"
           ? rawData.filter(
               (c) =>
-                c.patientId === "patient-001" ||
-                (c.patientName && c.patientName.toLowerCase().includes("john"))
+                c.patientId === currentPatientId ||
+                (c.patientName && c.patientName.toLowerCase().includes(currentPatientId.toLowerCase()))
             )
           : rawData;
 

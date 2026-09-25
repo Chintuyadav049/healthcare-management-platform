@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 public class KafkaConsumerService {
 
     private final VitalsRepository vitalsRepository;
+    private final AlertEngineService alertEngineService;
 
-    public KafkaConsumerService(VitalsRepository vitalsRepository) {
+    public KafkaConsumerService(VitalsRepository vitalsRepository, AlertEngineService alertEngineService) {
         this.vitalsRepository = vitalsRepository;
+        this.alertEngineService = alertEngineService;
     }
 
     @KafkaListener(topics = "vitals", groupId = "medisphere-group")
@@ -39,8 +41,10 @@ public class KafkaConsumerService {
             );
 
             vitalsRepository.save(vitals);
-
             System.out.println("Vitals saved to MongoDB successfully.");
+
+            // Evaluate through Real-Time AI Anomaly Detection & Clinical Rule Engine
+            alertEngineService.processVitalsPacket(patientId, heartRate, systolicBP, diastolicBP, temperature, oxygenSaturation);
 
         } catch (Exception e) {
             System.out.println("Error processing Kafka vitals:");
